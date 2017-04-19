@@ -20,7 +20,10 @@
         socket.on('Conectado',function(myId){
           userMe.id=myId;
         });
-
+        socket.on('imagemEnviada',function(imagem){
+          $scope.mensagens.push(createMessage(imagem.user,"Anon"+imagem.user,"enviou uma imagem: <a href='/downloadImage/"+imagem.name+"'>"+imagem.name+"</a>","msgOrdinaria"));
+          $scope.$apply();
+        });
         socket.on('serverMensagem',function(serverMsg){
           $scope.mensagens.push(createMessage(0,"Servidor",serverMsg,"msgServidor"));
           $scope.$apply();
@@ -61,12 +64,31 @@
           socket.emit('digitando');
         }
 
-        // $scope.carregarImagem=function(){
-        //   var fr=new FileReader()
-        //   fr.onload=function(content){
-        //     io.emit('imagem',content);
-        //   }
-        //   fr.readAsBinaryString(document.getElementById('imagem').files[0]);
-        // }
+        $scope.carregarImagem=function(){
+          var fr=new FileReader();
+          var input=document.getElementById('imagem');
+          var file=input.files[0];
+          var ext=file.name.split('.').pop();
+
+          var extsAceitos = ['jpg', 'jpeg', 'png', 'gif'];
+          var aceito=extsAceitos.some(function(extension){
+            return ext==extension;
+          })
+          if(!aceito){
+            $scope.error=true;
+            $scope.mensagemDeErro="Este tipo de arquivo não pode ser aceito !!"
+            $scope.$apply();
+
+            setTimeout(function(){$scope.error=false;$scope.$apply()},3000)
+            return;
+          }
+          fr.onload=function(content){
+            socket.emit('imagem',{ext:ext,data:content.target.result,user:userMe.id});
+            $scope.mensagens.push(createMessage(0,"You","Imagem enviada",'texto'));
+            $scope.$apply();
+            input.value=""
+          }
+          fr.readAsBinaryString(file);
+        }
 
     });

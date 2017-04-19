@@ -32,16 +32,19 @@
           <th></th>
         </tr>
         <tr ng-repeat="mensagem in mensagens">
-          <td ng-style="userColor(mensagem.user)" class="nome-usuario" style="cursor:pointer" ng-click="privadoTo(mensagem.nick,myMsg)">{{mensagem.nick+":"}}</td>
-          <td class="{{mensagem.classe}}" ng-bind-html="mensagem.msg | unsafe"></td>
+            <td ng-style="userColor(mensagem.user)" class="nome-usuario" style="cursor:pointer" ng-click="privadoTo(mensagem.nick,myMsg)">{{mensagem.nick+":"}}</td>
+            <td class="{{mensagem.classe}}" ng-bind-html="mensagem.msg | unsafe"></td>
         </tr>
 
       </table>
     </div>
 
     <div id="bottom-box">
-      <div id="digitando_dialog" ng-show="digitando">Alguém está digitando</div>
-      <!-- <input type="file" id="imagem"><button ng-click="carregarImagem()">enviar</button> -->
+      <div id="digitando_dialog" class="popUp" ng-show="digitando">Alguém está digitando</div>
+      <div id="msgErro" class="popUp" ng-show="error">{{mensagemDeErro}}</div>
+      <label for="imagem">inserir icone de camera</label>
+      <input type="file" id="imagem"  onchange="angular.element(this).scope().carregarImagem()">
+
       <input type="text" class="form-control" id="msg-input" ng-model="myMsg" placeholder="Digite sua Mensagem" ng-keypress="sendDigitando()" ng-keyup="$event.keyCode == 13 && enviar(myMsg)">
     </div>
   </div>

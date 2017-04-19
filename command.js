@@ -15,7 +15,7 @@ var _run=function(linha,connections){
       break;
     case ((/help/).test(comando)):exibirHelp(linha,connections);
       break;
-    default: console.log("passou direto");
+    default: exibirHelp(linha,connections);
   }
 };
 
