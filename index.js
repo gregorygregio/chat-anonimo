@@ -4,10 +4,20 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path=require('path');
 var command=require('./command.js');
-
+var fs=require('fs');
+var random=require('./randomNumber.js')
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/downloadImage/*',function(req,res){
+  var imagem=req.path.split('/').pop();
+
+  res.download(__dirname + '/temp/'+imagem,imagem,function(err){
+    if(err){
+      io.emit('serverMensagem',"A imagem "+imagem+" não existe mais")
+    }
+  })
+})
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/view/chat.html');
 });
@@ -51,6 +61,32 @@ io.on('connection', function(socket){
     a=setTimeout(function(){
       socket.broadcast.emit('stopDigitando');
     },1000);
+
+  })
+
+  socket.on('imagem',function(file){
+
+    var name=random.randomSequence(32)+"."+file.ext;
+    var path=__dirname+"/temp/"+name;
+    fs.open(path,"a",0755,function(err,fd){
+
+      if(err){
+        console.log(err);
+      }
+      else{
+        fs.write(fd,file.data,null,"Binary",function(err,writen){
+            if(err){
+              console.log(err);
+            }else{
+              socket.broadcast.emit('imagemEnviada',{user:file.user,name:name})
+              setTimeout(function(){
+                fs.unlink(path);
+              },1000*60*60)
+            }
+        })
+      }
+
+    });
 
   })
 

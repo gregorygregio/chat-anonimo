@@ -29,11 +29,18 @@
   border-bottom-left-radius: 20px;
 }
 
-#digitando_dialog{
+.popUp{
   width: 100%;
   left: 0;
   height: 20px;
   text-align: center;
+}
+#msgErro{
+  color:red;
+  background-color: #fee7e7;
+  border-top: solid 1px red;
+}
+#digitando_dialog{
   color: #0066ff;
   background-color:#e6ecff;
 }
@@ -67,4 +74,7 @@
 .msgPrivada{
   font-style: italic;
   color: red;
+}
+#imagem{
+  display: none;
 }
